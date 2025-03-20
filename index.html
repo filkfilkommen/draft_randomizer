@@ -45,6 +45,7 @@ display: block;
 </head>
 <body>
 <div class="grid-container" id="gridContainer"></div>
+
 <script>
 const imageUrls = [
 "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/01_shaquille_oneal.jpg",
@@ -78,8 +79,8 @@ const imageUrls = [
 
 const gridContainer = document.getElementById("gridContainer");
 let imageBlocks = []; // Array to hold all image block objects
-let nextBlockTimer;
-const rotationDuration = 27 * 300; // 8100ms per full cycle
+let nextBlockTimer; // Timer for auto-adding blocks
+const rotationDuration = 27 * 300; // 8100ms for a full cycle
 
 // Fisher-Yates shuffle
 function shuffleArray(arr) {
@@ -89,17 +90,14 @@ const j = Math.floor(Math.random() * (i + 1));
 }
 }
 
-// Create a new image block (an image container that cycles through 27 images)
+// Create a new image block
 function createImageBlock() {
-// Copy and shuffle the image URLs for a new unique order
 let shuffled = [...imageUrls];
 shuffleArray(shuffled);
 
-// Create a new container element
 const block = document.createElement("div");
 block.classList.add("image-container");
 
-// Create an <img> for each URL; only the first image is initially active
 shuffled.forEach((url, i) => {
 const img = document.createElement("img");
 img.src = url;
@@ -110,25 +108,19 @@ img.style.animationDelay = `${i * 0.1}s`;
 block.appendChild(img);
 });
 
-// Append the new block to the grid container
 gridContainer.appendChild(block);
-imageBlocks.push({ block: block, index: 0, total: shuffled.length });
+imageBlocks.push({ block, index: 0, total: shuffled.length });
 
-// Update the grid layout (keep layout the same as before)
 updateGridSize();
-
-// Start cycling images in this block
 startBlockCycle(imageBlocks.length - 1);
 
-// Schedule next block auto-add: if fewer than 6 blocks, wait a full rotation; else, rapid addition
-if (nextBlockTimer) {
-clearTimeout(nextBlockTimer);
-}
+// Schedule next block auto-add:
+if (nextBlockTimer) clearTimeout(nextBlockTimer);
 const delay = imageBlocks.length < 6 ? rotationDuration : 300;
 nextBlockTimer = setTimeout(createImageBlock, delay);
 }
 
-// Cycle through images in a given block
+// Cycle images in a given block
 function startBlockCycle(blockIndex) {
 const blockObj = imageBlocks[blockIndex];
 const imgs = blockObj.block.querySelectorAll("img");
@@ -139,17 +131,16 @@ imgs[blockObj.index].classList.add("active");
 }, 300);
 }
 
-// Update grid layout to keep image blocks equal in size and maintain the original layout
+// Update grid layout so blocks remain equal in size and fill the viewport
 function updateGridSize() {
 const numBlocks = imageBlocks.length;
-// Determine number of columns based on viewport width and a minimum block width of 150px, maximum 10 columns
-const possibleColumns = Math.floor(window.innerWidth / 150);
+const minBlockWidth = 150;
+const possibleColumns = Math.floor(window.innerWidth / minBlockWidth);
 const columns = Math.min(possibleColumns, 10) || 1;
 gridContainer.style.display = "grid";
 gridContainer.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
 gridContainer.style.gridAutoRows = `1fr`;
 
-// Calculate new block size so that blocks fill the viewport evenly
 const blockWidth = window.innerWidth / columns;
 const rows = Math.ceil(numBlocks / columns);
 const blockHeight = window.innerHeight / rows;
@@ -159,18 +150,8 @@ blockObj.block.style.height = `${blockHeight}px`;
 });
 }
 
-// Event listeners: on click, Enter key, or touch, add a new block manually
-function handleAddBlock(e) {
-if (e.type === "click" || (e.type === "keydown" && e.key === "Enter") || e.type === "touchstart") {
-createImageBlock();
-}
-}
-document.addEventListener("click", handleAddBlock);
-document.addEventListener("keydown", handleAddBlock);
-document.addEventListener("touchstart", handleAddBlock);
+// Remove manual event listeners – blocks now load automatically only.
 window.addEventListener("resize", updateGridSize);
-
-// Start the first block when the page loads
 window.onload = createImageBlock;
 </script>
 </body>
