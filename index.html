@@ -12,30 +12,32 @@ box-sizing: border-box;
 }
 body {
 background-color: black;
+/* We'll let the container do the layout. Body just centers everything vertically. */
 display: flex;
 justify-content: center;
-align-items: center;
+align-items: flex-start; /* We'll scroll if we exceed viewport height. */
 height: 100vh;
-overflow: hidden;
+overflow: auto; /* So we can scroll if there's more content than fits on the screen. */
 }
-/* Grid container remains as approved */
-.grid-container {
-display: grid;
-width: 100vw;
-height: 100vh;
-background-color: black;
-/* We want some gap so the background is visible */
-grid-gap: 20px;
-justify-content: center;
-align-content: center;
+/*
+We'll use a flex container so that each image block
+sits side by side until it can't fit, then wraps.
+*/
+.flex-container {
+display: flex;
+flex-wrap: wrap; /* This is key: it wraps to the next line when there's no more horizontal space. */
+justify-content: flex-start; /* Align them from the left to right. */
+align-items: flex-start;
+width: auto;
+padding: 20px; /* Some spacing around the container if you want. */
+gap: 20px; /* Spacing between blocks. Adjust as needed. */
 }
-/* Each image block is originally fixed at 740x560 */
 .image-container {
 position: relative;
-width: 740px;
-height: 560px;
+width: 740px; /* Fixed width as per your screenshot */
+height: 560px; /* Fixed height as per your screenshot */
 overflow: hidden;
-/* A small margin is built into the grid-gap */
+background-color: black; /* Just in case, to unify the background. */
 }
 .image-container img {
 width: 100%;
@@ -50,7 +52,8 @@ display: block;
 </style>
 </head>
 <body>
-<div class="grid-container" id="gridContainer"></div>
+<!-- Instead of a grid, we use a flex container -->
+<div class="flex-container" id="mainContainer"></div>
 
 <script>
 const imageUrls = [
@@ -83,12 +86,17 @@ const imageUrls = [
 "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/27_byron_houston.jpg"
 ];
 
-const gridContainer = document.getElementById("gridContainer");
-let imageBlocks = []; // Holds all blocks
-let nextBlockTimer; // Timer for auto-adding blocks
-const rotationDuration = 27 * 150; // 27 images x 150ms = 4050ms per full cycle
+// We cycle images at 300ms in your screenshot.
+// If you want it half, set to 150 or whatever you prefer.
+const cycleInterval = 300;
+// A full cycle is 27 images x cycleInterval
+const rotationDuration = 27 * cycleInterval; // 8100ms if cycleInterval = 300
 
-// Fisher-Yates shuffle
+let mainContainer = document.getElementById("mainContainer");
+let blocks = [];
+let nextBlockTimer = null;
+
+// Shuffle
 function shuffleArray(arr) {
 for (let i = arr.length - 1; i > 0; i--) {
 const j = Math.floor(Math.random() * (i + 1));
@@ -96,97 +104,49 @@ const j = Math.floor(Math.random() * (i + 1));
 }
 }
 
-// Create a new image block (as approved)
-function createImageBlock() {
+function createBlock() {
+// shuffle the images
 let shuffled = [...imageUrls];
 shuffleArray(shuffled);
 
-const block = document.createElement("div");
-block.classList.add("image-container");
+// create container
+const blockDiv = document.createElement("div");
+blockDiv.classList.add("image-container");
 
+let images = [];
 shuffled.forEach((url, i) => {
-const img = document.createElement("img");
+let img = document.createElement("img");
 img.src = url;
 if (i === 0) {
 img.classList.add("active");
 }
-img.style.animationDelay = `${i * 0.1}s`;
-block.appendChild(img);
+blockDiv.appendChild(img);
+images.push(img);
 });
 
-gridContainer.appendChild(block);
-imageBlocks.push({ block: block, index: 0, total: shuffled.length });
+mainContainer.appendChild(blockDiv);
+blocks.push({ container: blockDiv, images: images, index: 0 });
 
-// Maintain original approved layout: fixed block size until grid is full.
-updateGridSize();
-startBlockCycle(imageBlocks.length - 1);
+startCycle(blocks.length - 1);
 
-// Schedule automatic addition of a new block:
+// schedule next block addition
 if (nextBlockTimer) clearTimeout(nextBlockTimer);
-// If fewer than 6 blocks, wait one full cycle; after that, add blocks every 150ms
-const delay = imageBlocks.length < 6 ? rotationDuration : 150;
-nextBlockTimer = setTimeout(createImageBlock, delay);
+let delay = (blocks.length < 6) ? rotationDuration : cycleInterval;
+nextBlockTimer = setTimeout(createBlock, delay);
 }
 
-// Cycle images in a block
-function startBlockCycle(blockIndex) {
-const blockObj = imageBlocks[blockIndex];
-const imgs = blockObj.block.querySelectorAll("img");
+function startCycle(blockIndex) {
+let blockObj = blocks[blockIndex];
 setInterval(() => {
-imgs[blockObj.index].classList.remove("active");
-blockObj.index = (blockObj.index + 1) % blockObj.total;
-imgs[blockObj.index].classList.add("active");
-}, 150);
+blockObj.images[blockObj.index].classList.remove("active");
+blockObj.index = (blockObj.index + 1) % blockObj.images.length;
+blockObj.images[blockObj.index].classList.add("active");
+}, cycleInterval);
 }
 
-// Update grid layout to maintain original approved placement
-function updateGridSize() {
-// We'll use the fixed size (740x560) for each block as long as the grid doesn't overflow.
-// When more blocks are added such that the total grid width or height would exceed the viewport,
-// then we shrink all blocks uniformly. Otherwise, we keep the fixed size.
-const fixedWidth = 740;
-const fixedHeight = 560;
-const margin = 20; // Assume a gap between blocks for background to show
-const numBlocks = imageBlocks.length;
-
-// Calculate the ideal grid: maximum columns if using fixed size (plus margin)
-const maxColumns = Math.floor(window.innerWidth / (fixedWidth + margin)) || 1;
-// Let columns be the minimum of numBlocks and maxColumns
-const columns = Math.min(numBlocks, maxColumns);
-const rows = Math.ceil(numBlocks / columns);
-
-// Calculate total grid dimensions using fixed size and margin
-const totalGridWidth = columns * (fixedWidth + margin) - margin;
-const totalGridHeight = rows * (fixedHeight + margin) - margin;
-
-// If the fixed grid fits within the viewport, use fixed size; otherwise, calculate a scaling factor.
-let scale = 1;
-if (totalGridWidth > window.innerWidth || totalGridHeight > window.innerHeight) {
-const scaleX = window.innerWidth / totalGridWidth;
-const scaleY = window.innerHeight / totalGridHeight;
-scale = Math.min(scaleX, scaleY);
-// Ensure not to go below 150px width per block
-scale = Math.max(scale, 150 / fixedWidth);
-}
-
-// Set the grid container as a CSS Grid with centered items
-gridContainer.style.display = "grid";
-gridContainer.style.gridTemplateColumns = `repeat(${columns}, auto)`;
-gridContainer.style.justifyContent = "center";
-gridContainer.style.alignContent = "center";
-
-// Update each block's size
-imageBlocks.forEach(blockObj => {
-blockObj.block.style.width = `${fixedWidth * scale}px`;
-blockObj.block.style.height = `${fixedHeight * scale}px`;
-});
-}
-
-// Remove manual event listeners for adding blocks; blocks load automatically only.
-window.addEventListener("resize", updateGridSize);
-
-// Start the first block on page load
-window.onload = createImageBlock;
+// no event listeners for manual addition— purely automatic
+// Just start the first block
+window.onload = createBlock;
 </script>
 </body>
 </html>
