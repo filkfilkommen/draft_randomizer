@@ -30,12 +30,41 @@ height: 100%; /* Fill container height */
 object-fit: contain; /* Ensure full image is visible, scaled to fit */
 display: block;
 }
-
 </style>
 </head>
 <body>
 <script>
 // Array of image URLs
+const images = [
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/01_shaquille_oneal.jpg",
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/02_alonzo_mourning.jpg",
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/03_christian_laettner.jpg",
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/04_jim_jackson.jpg",
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/05_laphonso_ellis.jpg",
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/06_tom_gugliotta.jpg",
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/07_walt_williams.jpg",
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/08_todd_day.jpg",
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/09_clarence_weatherspoon.jpg",
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/10_adam_keefe.jpg",
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/11_robert_horry.jpg",
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/12_harold_miner.jpg",
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/13_bryant_stith.jpg",
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/14_malik_sealy.jpg",
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/15_anthony_peeler.jpg",
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/16_randy_woods.jpg",
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/17_doug_christie.jpg",
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/18_tracy_murray.jpg",
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/19_don_maclean.jpg",
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/20_hubert_davis.jpg",
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/21_jon_barry.jpg",
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/22_oliver_miller.jpg",
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/23_lee_mayberry.jpg",
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/24_latrell_sprewell.jpg",
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/25_elmore_spencer.jpg",
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/26_dave_johnson.jpg",
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/27_byron_houston.jpg"
+];
+
 let sequenceContainer = document.body;
 
 // Shuffle function for randomizing image order
@@ -72,8 +101,6 @@ createImageSequence();
 
 // Listen for Enter key to add new sequence
 document.addEventListener('keydown', function(event) {
-
-
 if (event.key === "Enter") {
 createImageSequence();
 }
