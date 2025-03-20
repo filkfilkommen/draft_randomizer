@@ -50,7 +50,7 @@ const images = [
 "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/24_latrell_sprewell.jpg", 
 "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/25_elmore_spencer.jpg", 
 "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/26_dave_johnson.jpg", 
-"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/27_byron_houston.jpg" 
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/27_byron_houston.jpg", 
 ];
 
 const displayDuration = 400;
@@ -58,34 +58,24 @@ const displayDuration = 400;
 let shuffledImages = [];
 let currentIndex = 0;
   
-function shuffleArray(array) {
-let arr = array.slice();
+function shuffle(array) {
 for (let i = arr.length - 1; i > 0; i--) { 
-  const j = Math.floor(Math.random() * (i + 1));
-  [arr[i], arr[j]] = [arr[j], arr[i];
-}
-return arr;
-}
-
-function cycleImages () {
-  if (currentIndex < shuffledImages.length) {
-    document.getElementById('randomImage').src = shuffledImages[currentIndex];
-    currentIndex++;
-    setTimeout(cycleImages, displayDuration);
-  } else {
-    startCycle();
+  let j = Math.floor(Math.random() * (i + 1));
+  [array[i], array[j]] = [array[j], array[i]];
   }
 }
 
-function startCycle() {
-  shuffledImages = shuffleArray(images);
-  currentIndex = 0;
+  let currentIndex = 0;
+  function cycleImages () { 
+  if (currentIndex === 0) shuffled(images); 
+    document.getElementById('randomImage').src = images[currentIndex];
+    currentIndex = (currentIndex +1) % images.length;
+
+  }
+  
+    setInterval(cycleImages, 300);
+  
   cycleImages();
-}
-
-window.onload = startCycle;
-};
-
 </script>
 </body>
 </html>
