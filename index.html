@@ -6,17 +6,16 @@
 <title>draft_randomizer</title>
 <style>
   body {
+      margin: 0;
+      background-color: #222;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      margin: 0;
-      background-color: #222;
+      height: 100vh;  
   }
   img {
-    width:80%;
+    width:100%;
     height: auto;
-    transition: transform 1s ease;
   }
   </style>
 </head>
@@ -54,15 +53,37 @@ const images = [
 "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/27_byron_houston.jpg" 
 ];
 
+const displayDuration = 400;
 
-function shuffleImage() {
-const randomIndex = Math.floor(Math.random() *images.length);
-const imgElement = document.getElementById('randomImage');
-imgElement.src = images[randomIndex];
+let shuffledImages = [];
+let currentIndex = 0;
+  
+function shuffleArray(array) {
+let arr = array.slice();
+for (let i = arr.length - 1; i > 0; i--) { 
+  const j = Math.floor(Math.random() * (i + 1));
+  [arr[i], arr[j]] = [arr[j], arr[i];
+}
+return arr;
 }
 
-window.onload = function() {
-  shuffleImage();
+function cycleImages () {
+  if (currentIndex < shuffledImages.length) {
+    document.getElementById('randomImage').src = shuffledImages[currentIndex];
+    currentIndex++;
+    setTimeout(cycleImages, displayDuration);
+  } else {
+    startCycle();
+  }
+}
+
+function startCycle() {
+  shuffledImages = shuffleArray(images);
+  currentIndex = 0;
+  cycleImages();
+}
+
+window.onload = startCycle;
 };
 
 </script>
