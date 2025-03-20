@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>draft_randomizer</title>
+<style>
+  body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #222;
+  }
+  img {
+    width:80%;
+    height: auto;
+    transition: transform 1s ease;
+  }
+  </style>
+</head>
+<body>
+<img id="randomImage" src="" alt="Random Image">
+  
+<script>
+const images = [
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/refs/heads/main/01_shaquille_oneal.jpg",
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/refs/heads/main/02_alonzo_mourning.jpg",
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/refs/heads/main/03_christian_laettner.jpg"
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/refs/heads/main/04_jim_jackson.jpg"
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/refs/heads/main/05_laphonso_ellis.jpg"
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/refs/heads/main/06_tom_gugliotta.jpg"
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/refs/heads/main/07_walt_williams.jpg" 
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/refs/heads/main/08_todd_day.jpg" 
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/refs/heads/main/09_clarence_weatherspoon.jpg" 
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/refs/heads/main/10_adam_keefe.jpg" 
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/refs/heads/main/11_robert_horry.jpg" 
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/refs/heads/main/12_harold_miner.jpg" 
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/refs/heads/main/13_bryant_stith.jpg" 
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/refs/heads/main/14_malik_sealy.jpg" 
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/refs/heads/main/15_anthony_peeler.jpg" 
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/refs/heads/main/16_randy_woods.jpg"
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/refs/heads/main/17_doug_christie.jpg" 
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/refs/heads/main/18_tracy_murray.jpg" 
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/refs/heads/main/19_don_maclean.jpg" 
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/refs/heads/main/20_hubert_davis.jpg" 
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/refs/heads/main/21_jon_barry.jpg" 
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/refs/heads/main/22_oliver_miller.jpg" 
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/refs/heads/main/23_lee_mayberry.jpg"
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/refs/heads/main/24_latrell_sprewell.jpg" 
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/refs/heads/main/25_elmore_spencer.jpg" 
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/refs/heads/main/26_dave_johnson.jpg" 
+"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/refs/heads/main/27_byron_houston.jpg" 
+];
+
+
+function shuffleImage() {
+const randomIndex = Math.floor(Math.random() *images.length);
+const imgElement = document.getElementById('randomImage');
+imgElement.src = images[randomIndex];
+}
+
+window.onload = function() {
+  shuffleImage();
+};
+
+</script>
+</body>
+</html>
