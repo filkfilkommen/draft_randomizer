@@ -15,7 +15,7 @@
         }
         .image-container {
             width: auto;
-            height: 600px;
+            height: 360px; /* Reduced to 60% of original 600px */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -25,11 +25,10 @@
             max-width: 100%;
             object-fit: contain;
             position: absolute;
-            opacity: 0;
-            transition: opacity 0.2s ease-in-out;
+            display: none; /* Initially hidden */
         }
         .image-container img.active {
-            opacity: 1;
+            display: block; /* Show only active image */
         }
     </style>
 </head>
@@ -65,11 +64,9 @@
 "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/25_elmore_spencer.jpg",
 "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/26_dave_johnson.jpg",
 "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/27_byron_houston.jpg"
-            // Add the rest of the 27 image URLs here
         ];
 
         const container = document.getElementById("imageContainer");
-
         let images = [];
         let index = 0;
 
@@ -90,7 +87,7 @@
         }
 
         preloadImages();
-        setInterval(cycleImages, 500); // Change image every 500ms
+        setInterval(cycleImages, 333); // Increased speed: image changes every 333ms
     </script>
 </body>
 </html>
