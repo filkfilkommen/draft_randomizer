@@ -10,37 +10,35 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            flex-wrap: wrap;
-            height: 100vh;
-            overflow: hidden;
+            flex-direction: column;
             margin: 0;
-            padding: 0;
+            padding: 20px;
+            overflow: hidden;
         }
         .container {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
             align-items: center;
-            width: 100vw;
-            height: 100vh;
+            width: 100%;
         }
         .image-container {
-            width: 740px;
-            height: 560px;
             display: flex;
             justify-content: center;
             align-items: center;
             position: relative;
+            overflow: hidden;
+            transition: transform 0.2s ease;
         }
         .image-container img {
             max-width: 100%;
             max-height: 100%;
             object-fit: contain;
             position: absolute;
-            display: none; /* Initially hidden */
+            display: none;
         }
         .image-container img.active {
-            display: block; /* Show only active image */
+            display: block;
         }
     </style>
 </head>
@@ -58,33 +56,19 @@
             "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/07_walt_williams.jpg",
             "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/08_todd_day.jpg",
             "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/09_clarence_weatherspoon.jpg",
-            "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/10_adam_keefe.jpg",
-            "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/11_robert_horry.jpg",
-            "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/12_harold_miner.jpg",
-            "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/13_bryant_stith.jpg",
-            "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/14_malik_sealy.jpg",
-            "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/15_anthony_peeler.jpg",
-            "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/16_randy_woods.jpg",
-            "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/17_doug_christie.jpg",
-            "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/18_tracy_murray.jpg",
-            "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/19_don_maclean.jpg",
-            "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/20_hubert_davis.jpg",
-            "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/21_jon_barry.jpg",
-            "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/22_oliver_miller.jpg",
-            "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/23_lee_mayberry.jpg",
-            "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/24_latrell_sprewell.jpg",
-            "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/25_elmore_spencer.jpg",
-            "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/26_dave_johnson.jpg",
-            "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/27_byron_houston.jpg"
+            "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/10_adam_keefe.jpg"
         ];
 
         const mainContainer = document.getElementById("mainContainer");
         let imageContainers = [];
+        let baseSize = 740; // Base width for image containers
+        let scaleFactor = 1; // Dynamic scale for all images
 
         function createImageContainer() {
             const container = document.createElement("div");
             container.classList.add("image-container");
             mainContainer.appendChild(container);
+            imageContainers.push(container);
 
             const shuffledImages = [...imageUrls].sort(() => Math.random() - 0.5);
             const images = shuffledImages.map(src => {
@@ -103,19 +87,21 @@
                 images[index].classList.add("active");
             }
 
-            setInterval(cycleImages, 300); // Speed: 300ms per image
-            imageContainers.push({ container });
+            setInterval(cycleImages, 300);
             updateGridSize();
         }
 
         function updateGridSize() {
             let numContainers = imageContainers.length;
-            let gridSize = Math.ceil(Math.sqrt(numContainers));
-            let newSize = Math.min(window.innerWidth / gridSize, window.innerHeight / gridSize);
+            let maxColumns = Math.floor(window.innerWidth / baseSize);
+            let numRows = Math.ceil(numContainers / maxColumns);
 
-            imageContainers.forEach(({ container }, i) => {
-                container.style.width = `${newSize}px`;
-                container.style.height = `${(newSize / 740) * (560 - (i * 2))}px`; // Reducing height per row
+            // Adjust scale based on number of rows
+            scaleFactor = Math.max(0.3, 1 - (numRows * 0.1));
+
+            imageContainers.forEach(container => {
+                container.style.width = `${baseSize * scaleFactor}px`;
+                container.style.height = `${(baseSize * 560 / 740) * scaleFactor}px`;
             });
         }
 
