@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>92 draft randomizer</title>
+<title>Random Image Sequence</title>
 <style>
 body {
 margin: 0;
@@ -11,18 +11,19 @@ padding: 0;
 display: flex;
 flex-wrap: wrap;
 justify-content: center;
-align-items: center;
+align-items: flex-start;
 min-height: 100vh;
 background-color: #000;
+overflow: hidden; /* Prevents overflow of images outside the viewport */
 }
 
 .sequence {
-width: 65vw; /* Full width of the sequence */
-height: 65vh; /* Full height of the sequence */
+width: 65vw; /* 65% of the viewport width */
+height: 65vh; /* 65% of the viewport height */
 display: flex;
 justify-content: center;
 align-items: center;
-margin: 0; /* No margin between the sequences */
+margin: 2px; /* Minimal margin between sequences */
 border: 2px solid white;
 overflow: hidden;
 position: relative;
@@ -31,14 +32,14 @@ position: relative;
 .image {
 width: 100%;
 height: 100%;
-object-fit: cover; /* Make sure image covers the area */
+object-fit: cover;
 }
 </style>
 </head>
 <body>
 
 <script>
-// Array of image URLs (replace with your raw URLs)
+// Array of image URLs (replace with your actual raw URLs)
 const images = [
 "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/01_shaquille_oneal.jpg",
 "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/02_alonzo_mourning.jpg",
@@ -67,7 +68,7 @@ const images = [
 "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/25_elmore_spencer.jpg", 
 "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/26_dave_johnson.jpg", 
 "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/27_byron_houston.jpg"
-// Add all the other image URLs
+// Add all 27 image URLs...
 ];
 
 // Function to shuffle the array of images
@@ -88,32 +89,57 @@ const shuffledImages = shuffleArray([...images]);
 const sequenceContainer = document.createElement('div');
 sequenceContainer.classList.add('sequence');
 
-// Create the image element and append it
+// Create the image element
 const imgElement = document.createElement('img');
-imgElement.src = shuffledImages[0]; // Display the first image of the shuffled set
 imgElement.classList.add('image');
 sequenceContainer.appendChild(imgElement);
 
 // Add the sequence to the body
 document.body.appendChild(sequenceContainer);
 
-// Shrink all existing sequences after the page has been filled with a certain amount
-if (document.body.children.length > 3) {
+let imageIndex = 0;
+
+// Function to cycle images in the sequence
+function cycleImages() {
+imgElement.src = shuffledImages[imageIndex];
+imageIndex = (imageIndex + 1) % shuffledImages.length; // Cycle through the images
+
+// Call cycleImages every 200 milliseconds (adjustable)
+setTimeout(cycleImages, 200);
+}
+
+// Start cycling images for this sequence
+cycleImages();
+
+// Recalculate and shrink images based on available space
+adjustSequences();
+}
+
+// Function to adjust the size of sequences when the page is filled
+function adjustSequences() {
 const allSequences = document.querySelectorAll('.sequence');
+const totalSequences = allSequences.length;
+
+// Resize sequences only when we have too many
+if (totalSequences > 3) {
+const newSize = 65 - (totalSequences - 3) * 10; // Shrinks by 10% for each extra sequence
+const minSize = 30; // Minimum size to avoid becoming too tiny
+const finalSize = newSize < minSize ? minSize : newSize; // Ensure a minimum size
+
 allSequences.forEach(sequence => {
-sequence.style.width = '50vw'; // Shrink size once enough sequences are present
-sequence.style.height = '50vh'; // Shrink size accordingly
+sequence.style.width = `${finalSize}vw`;
+sequence.style.height = `${finalSize}vh`;
 });
 }
 }
 
 // Trigger the adding of new sequences every 27 images (could be adjusted)
-setInterval(addNewSequence, 27 * 100); // Change 100 to control speed
+setInterval(addNewSequence, 27 * 100); // Change 100 to control speed of new sequence addition
 
 // Optional: Allow the user to refresh by hitting enter
 document.body.addEventListener('keydown', function(event) {
 if (event.key === 'Enter') {
-location.reload(); // Refresh the page and shuffle images
+location.reload(); // Refresh the page and reshuffle images
 }
 });
 
