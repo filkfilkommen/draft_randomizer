@@ -9,7 +9,6 @@ body {
 margin: 0;
 padding: 0;
 display: flex;
-flex-wrap: wrap;
 justify-content: center;
 align-items: flex-start;
 height: 100vh;
@@ -17,18 +16,32 @@ overflow: hidden;
 background-color: #000;
 }
 
+.container {
+width: 100%;
+height: 100%;
+display: grid;
+grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+grid-gap: 5px;
+justify-content: center;
+align-items: flex-start;
+overflow: hidden;
+}
+
 .image-container {
 display: flex;
 flex-direction: column;
 justify-content: center;
 align-items: center;
-margin: 10px;
+margin: 5px;
+box-sizing: border-box;
+transition: all 0.3s ease;
 }
 
 .image {
-width: 65%; /* Initial size */
-display: none; /* Hide images initially */
-transition: all 0.2s ease-in-out; /* Optional smooth transitions */
+width: 100%;
+height: auto;
+display: none;
+transition: all 0.2s ease-in-out;
 }
 
 /* Keyframe for rapidly showing and hiding images */
@@ -39,14 +52,15 @@ transition: all 0.2s ease-in-out; /* Optional smooth transitions */
 60% { opacity: 0; }
 80% { opacity: 1; }
 100% { opacity: 0; }
-
 }
 </style>
 </head>
 <body>
 
+<div class="container"></div>
+
 <script>
-// Array of image URLs (Make sure these are correct and in raw format)
+// Array of image URLs (Update these with your raw GitHub image URLs)
 const images = [
 "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/01_shaquille_oneal.jpg",
 "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/02_alonzo_mourning.jpg",
@@ -88,7 +102,6 @@ return array;
 }
 
 // Function to create a new sequence of images
-
 function createSequence() {
 const shuffledImages = shuffleArray([...images]);
 
@@ -107,15 +120,15 @@ img.alt = 'Random Image';
 img.style.animation = `flicker ${shuffledImages.length * 0.2}s infinite`;
 
 // Append image to container
-
 container.appendChild(img);
 });
 
-// Append the new sequence to the body
-document.body.appendChild(container);
+// Append the new sequence to the container (inside the main body)
+document.querySelector('.container').appendChild(container);
 
 // Start the images flickering
 startFlicker(container);
+adjustGrid();
 }
 
 // Function to start the flickering for each image container
@@ -132,8 +145,26 @@ currentIndex = (currentIndex + 1) % images.length; // Move to the next image in 
 }, 100); // Change every 100ms (adjust to make faster/slower flicker)
 }
 
-// Create the first sequence immediately when the page loads
+// Function to adjust the grid layout when new sequences are added
+function adjustGrid() {
+const containers = document.querySelectorAll('.image-container');
+const totalContainers = containers.length;
 
+// Calculate number of rows and columns for grid layout based on the total containers
+const rows = Math.ceil(Math.sqrt(totalContainers)); // Calculate rows needed for the grid
+const columns = Math.ceil(totalContainers / rows); // Calculate columns needed
+
+// Adjust the size of each container based on the grid
+containers.forEach(container => {
+const width = (100 / columns) - 10; // Adjust width based on columns
+container.style.width = `${width}%`;
+container.style.height = `${100 / rows}%`; // Adjust height based on rows
+});
+
+
+}
+
+// Create the first sequence immediately when the page loads
 createSequence();
 
 // Add a new sequence on key press (Enter key)
