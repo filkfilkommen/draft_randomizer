@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>draft randomizer</title>
+<title>92 draft randomizer</title>
 <style>
 body {
 margin: 0;
@@ -23,12 +23,22 @@ flex-direction: column;
 justify-content: center;
 align-items: center;
 margin: 10px;
-transition: all 0.3s ease-in-out;
 }
 
 .image {
 width: 65%; /* Initial size */
-transition: all 0.3s ease-in-out;
+display: none; /* Hide images initially */
+transition: all 0.2s ease-in-out; /* Optional smooth transitions */
+}
+
+/* Keyframe for rapidly showing and hiding images */
+@keyframes flicker {
+0% { opacity: 1; }
+20% { opacity: 0; }
+40% { opacity: 1; }
+60% { opacity: 0; }
+80% { opacity: 1; }
+100% { opacity: 0; }
 }
 </style>
 </head>
@@ -64,6 +74,7 @@ const images = [
 "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/25_elmore_spencer.jpg", 
 "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/26_dave_johnson.jpg", 
 "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/27_byron_houston.jpg"
+// Add all other image URLs here...
 ];
 
 // Function to shuffle an array
@@ -75,7 +86,7 @@ const j = Math.floor(Math.random() * (i + 1));
 return array;
 }
 
-// Function to create a new sequence
+// Function to create a new sequence of images
 function createSequence() {
 const shuffledImages = shuffleArray([...images]);
 
@@ -89,15 +100,36 @@ const img = document.createElement('img');
 img.src = imageUrl;
 img.className = 'image';
 img.alt = 'Random Image';
-img.style.width = `${65 - (index * 5)}%`; // Shrink each subsequent image
+
+// Add the flicker animation to each image
+img.style.animation = `flicker ${shuffledImages.length * 0.2}s infinite`;
+
+// Append image to container
 container.appendChild(img);
 });
 
 // Append the new sequence to the body
 document.body.appendChild(container);
+
+// Start the images flickering
+startFlicker(container);
 }
 
-// Create the first sequence
+// Function to start the flickering for each image container
+function startFlicker(container) {
+const images = container.querySelectorAll('.image');
+let currentIndex = 0;
+
+setInterval(() => {
+// Hide all images
+images.forEach(img => img.style.display = 'none');
+// Show the current image in the sequence
+images[currentIndex].style.display = 'block';
+currentIndex = (currentIndex + 1) % images.length; // Move to the next image in sequence
+}, 100); // Change every 100ms (adjust to make faster/slower flicker)
+}
+
+// Create the first sequence immediately when the page loads
 createSequence();
 
 // Add a new sequence on key press (Enter key)
@@ -106,9 +138,6 @@ if (event.key === 'Enter') {
 createSequence();
 }
 });
-
-// Optionally, you could add an automatic reshuffle/reload every few seconds:
-// setInterval(createSequence, 10000); // Uncomment for automatic reshuffle every 10 seconds
 </script>
 
 </body>
