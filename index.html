@@ -29,6 +29,45 @@ width: 100%; /* Fill container width */
 height: 100%; /* Fill container height */
 object-fit: contain; /* Ensure full image is visible, scaled to fit */
 display: block;
+animation: flicker 10s linear infinite;
+}
+
+/* Animation to make the image flicker like a gif */
+@keyframes flicker {
+0% {
+opacity: 0;
+}
+10% {
+opacity: 1;
+}
+20% {
+opacity: 0;
+}
+30% {
+opacity: 1;
+}
+40% {
+opacity: 0;
+}
+50% {
+opacity: 1;
+}
+60% {
+opacity: 0;
+}
+70% {
+opacity: 1;
+}
+80% {
+opacity: 0;
+}
+90% {
+opacity: 1;
+}
+100% {
+opacity: 0;
+
+}
 }
 </style>
 </head>
@@ -84,11 +123,12 @@ shuffleArray(images);
 let newContainer = document.createElement('div');
 newContainer.classList.add('image-container');
 
-// Create image elements for the sequence
+// Create image elements for the sequence, ensuring they act like a flickering gif
 for (let i = 0; i < images.length; i++) {
 let img = document.createElement('img');
 img.src = images[i];
 img.classList.add('image-sequence');
+img.style.animationDelay = `${i * 0.2}s`; // Delay each image to create flickering effect
 newContainer.appendChild(img);
 }
 
@@ -96,8 +136,10 @@ newContainer.appendChild(img);
 sequenceContainer.appendChild(newContainer);
 }
 
-// Initial sequence setup
-createImageSequence();
+// Create the first image sequence automatically when the page loads
+window.onload = createImageSequence;
+
+
 
 // Listen for Enter key to add new sequence
 document.addEventListener('keydown', function(event) {
@@ -105,7 +147,6 @@ if (event.key === "Enter") {
 createImageSequence();
 }
 });
-
 </script>
 </body>
 </html>
