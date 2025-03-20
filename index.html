@@ -1,60 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>92 draft randomizer</title>
-<style>
-body {
-margin: 0;
-overflow: hidden;
-background-color: black;
-display: flex;
-justify-content: center;
-align-items: center;
-height: 100vh;
-}
-
-.image-container {
-display: grid;
-grid-template-columns: repeat(auto-fill, minmax(30vw, 1fr)); /* Flexibly adjust size */
-gap: 0;
-width: 100%;
-height: 100%;
-justify-items: center;
-align-items: center;
-}
-
-.image-sequence-container {
-display: grid;
-grid-template-columns: 1fr; /* One image per row in each sequence */
-gap: 0;
-width: 100%;
-height: 100%;
-}
-
-.image-sequence {
-width: 100%;
-height: 100%;
-object-fit: cover;
-animation: flicker 1s infinite;
-}
-
-@keyframes flicker {
-0%, 100% {
-opacity: 0;
-}
-50% {
-opacity: 1;
-}
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>92 Draft Randomizer</title>
+    <style>
+        body {
+            background-color: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .image-container {
+            width: auto;
+            height: 600px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .image-container img {
+            max-height: 100%;
+            max-width: 100%;
+            object-fit: contain;
+            position: absolute;
+            opacity: 0;
+            transition: opacity 0.2s ease-in-out;
+        }
+        .image-container img.active {
+            opacity: 1;
+        }
+    </style>
 </head>
 <body>
-<script>
-// List of image URLs (27 images)
+    <div class="image-container" id="imageContainer"></div>
 
-const images = [
+    <script>
+        const imageUrls = [
 "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/01_shaquille_oneal.jpg",
 "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/02_alonzo_mourning.jpg",
 "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/03_christian_laettner.jpg",
@@ -82,65 +65,32 @@ const images = [
 "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/25_elmore_spencer.jpg",
 "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/26_dave_johnson.jpg",
 "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/27_byron_houston.jpg"
-];
+            // Add the rest of the 27 image URLs here
+        ];
 
-// Shuffle the images randomly
-function shuffleArray(arr) {
-for (let i = arr.length - 1; i > 0; i--) {
-const j = Math.floor(Math.random() * (i + 1));
-[arr[i], arr[j]] = [arr[j], arr[i]];
-}
-}
+        const container = document.getElementById("imageContainer");
 
-// Create and display the image sequence
-function createImageSequence() {
-// Shuffle the images
-shuffleArray(images);
+        let images = [];
+        let index = 0;
 
-// Get the container to hold the images
-const container = document.querySelector('.image-container');
+        function preloadImages() {
+            imageUrls.forEach((src, i) => {
+                let img = document.createElement("img");
+                img.src = src;
+                if (i === 0) img.classList.add("active"); // Start with the first image visible
+                container.appendChild(img);
+                images.push(img);
+            });
+        }
 
-// Create a new sequence container
-const sequenceContainer = document.createElement('div');
-sequenceContainer.classList.add('image-sequence-container');
+        function cycleImages() {
+            images[index].classList.remove("active");
+            index = (index + 1) % images.length;
+            images[index].classList.add("active");
+        }
 
-// Create image elements for each of the 27 images
-images.forEach((src, index) => {
-const img = document.createElement('img');
-img.src = src;
-img.classList.add('image-sequence');
-img.style.animationDelay = `${index * 0.1}s`; // Delay for flickering effect
-sequenceContainer.appendChild(img);
-});
-
-// Append the new sequence to the container
-container.appendChild(sequenceContainer);
-
-// Adjust the grid layout to fill the page and resize images
-adjustGridLayout();
-}
-
-// Function to adjust the grid layout
-function adjustGridLayout() {
-const container = document.querySelector('.image-container');
-const numSequences = container.children.length;
-const rows = Math.ceil(numSequences / 3); // Assuming a 3-column layout
-const columns = 3;
-
-container.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
-}
-
-// Start the first sequence automatically when the page loads
-window.onload = createImageSequence;
-
-// Add a new sequence when the Enter key is pressed
-
-
-document.addEventListener('keydown', function(event) {
-if (event.key === "Enter") {
-createImageSequence();
-}
-});
-</script>
+        preloadImages();
+        setInterval(cycleImages, 500); // Change image every 500ms
+    </script>
 </body>
 </html>
