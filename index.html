@@ -3,43 +3,53 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Random Image Sequence</title>
+<title>92 draft randomizer</title>
 <style>
 body {
 margin: 0;
 padding: 0;
 display: flex;
 flex-wrap: wrap;
-justify-content: center;
+justify-content: flex-start;
 align-items: flex-start;
-min-height: 100vh;
-background-color: #000;
-overflow: hidden; /* Prevents overflow of images outside the viewport */
+height: 100vh;
+overflow: hidden;
+background-color: black; /* No visible background */
 }
 
 .sequence {
-width: 65vw; /* 65% of the viewport width */
-height: 65vh; /* 65% of the viewport height */
+display: flex;
+flex-wrap: wrap;
+justify-content: flex-start;
+align-items: flex-start;
+margin: 0;
+position: relative;
+overflow: hidden;
+transition: all 0.5s ease;
+}
+
+.image-container {
+width: 100%;
+height: 100%;
 display: flex;
 justify-content: center;
 align-items: center;
-margin: 2px; /* Minimal margin between sequences */
-border: 2px solid white;
-overflow: hidden;
-position: relative;
+margin: 0;
+padding: 0;
 }
 
 .image {
-width: 100%;
-height: 100%;
-object-fit: cover;
+width: 65%; /* Initial image size */
+height: auto;
+object-fit: contain; /* Ensures images aren't cropped */
+transition: all 0.5s ease;
 }
+
 </style>
 </head>
 <body>
-
 <script>
-// Array of image URLs (replace with your actual raw URLs)
+// Array of image URLs
 const images = [
 "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/01_shaquille_oneal.jpg",
 "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/02_alonzo_mourning.jpg",
@@ -68,82 +78,69 @@ const images = [
 "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/25_elmore_spencer.jpg", 
 "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/26_dave_johnson.jpg", 
 "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/27_byron_houston.jpg"
-// Add all 27 image URLs...
 ];
 
-// Function to shuffle the array of images
+// Shuffle the images randomly
 function shuffleArray(array) {
 for (let i = array.length - 1; i > 0; i--) {
 const j = Math.floor(Math.random() * (i + 1));
-[array[i], array[j]] = [array[j], array[i]]; // Swap
+[array[i], array[j]] = [array[j], array[i]]; // Swap elements
 }
-return array;
-}
-
-// Function to create and append a new sequence of images
-function addNewSequence() {
-// Shuffle the images for each new sequence
-const shuffledImages = shuffleArray([...images]);
-
-// Create the sequence container
-const sequenceContainer = document.createElement('div');
-sequenceContainer.classList.add('sequence');
-
-// Create the image element
-const imgElement = document.createElement('img');
-imgElement.classList.add('image');
-sequenceContainer.appendChild(imgElement);
-
-// Add the sequence to the body
-document.body.appendChild(sequenceContainer);
-
-let imageIndex = 0;
-
-// Function to cycle images in the sequence
-function cycleImages() {
-imgElement.src = shuffledImages[imageIndex];
-imageIndex = (imageIndex + 1) % shuffledImages.length; // Cycle through the images
-
-// Call cycleImages every 200 milliseconds (adjustable)
-setTimeout(cycleImages, 200);
 }
 
-// Start cycling images for this sequence
-cycleImages();
+// Function to create a new sequence
+function createSequence() {
+shuffleArray(images);
+const sequence = document.createElement("div");
+sequence.classList.add("sequence");
 
-// Recalculate and shrink images based on available space
-adjustSequences();
+images.forEach((imageUrl) => {
+const imageContainer = document.createElement("div");
+imageContainer.classList.add("image-container");
+
+const img = document.createElement("img");
+img.src = imageUrl;
+img.classList.add("image");
+imageContainer.appendChild(img);
+
+sequence.appendChild(imageContainer);
+});
+
+document.body.appendChild(sequence);
+resizeSequences(); // Call the function to resize after new sequence is added
 }
 
-// Function to adjust the size of sequences when the page is filled
-function adjustSequences() {
-const allSequences = document.querySelectorAll('.sequence');
-const totalSequences = allSequences.length;
+// Function to resize and reposition sequences to fit the screen
+function resizeSequences() {
+const sequences = document.querySelectorAll(".sequence");
+const screenWidth = window.innerWidth;
+const screenHeight = window.innerHeight;
 
-// Resize sequences only when we have too many
-if (totalSequences > 3) {
-const newSize = 65 - (totalSequences - 3) * 10; // Shrinks by 10% for each extra sequence
-const minSize = 30; // Minimum size to avoid becoming too tiny
-const finalSize = newSize < minSize ? minSize : newSize; // Ensure a minimum size
+// Calculate optimal size based on how many sequences are on screen
+const size = Math.min(screenWidth / Math.ceil(Math.sqrt(sequences.length)), screenHeight / Math.ceil(Math.sqrt(sequences.length)));
 
-allSequences.forEach(sequence => {
-sequence.style.width = `${finalSize}vw`;
-sequence.style.height = `${finalSize}vh`;
+sequences.forEach((sequence) => {
+sequence.style.width = `${size}px`;
+sequence.style.height = `${size}px`;
+sequence.querySelectorAll(".image").forEach((img) => {
+img.style.width = "100%";
+img.style.height = "auto";
+});
 });
 }
-}
 
-// Trigger the adding of new sequences every 27 images (could be adjusted)
-setInterval(addNewSequence, 27 * 100); // Change 100 to control speed of new sequence addition
+// Create the first sequence when the page loads
+createSequence();
 
-// Optional: Allow the user to refresh by hitting enter
-document.body.addEventListener('keydown', function(event) {
-if (event.key === 'Enter') {
-location.reload(); // Refresh the page and reshuffle images
+// Add new sequence when "Enter" is pressed
+window.addEventListener("keydown", (e) => {
+if (e.key === "Enter") {
+createSequence();
 }
 });
 
+// Resize the sequences whenever the window is resized
+window.addEventListener("resize", resizeSequences);
 </script>
-
 </body>
 </html>
