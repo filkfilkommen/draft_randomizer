@@ -1,152 +1,143 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>92 draft randomizer</title>
-<style>
-body {
-margin: 0;
-overflow: hidden;
-background-color: black;
-display: flex;
-flex-wrap: wrap;
-justify-content: space-between;
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>92 draft randomizer</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
 
-.image-container {
-display: inline-block;
-margin: 0;
-position: relative;
-width: 33.33%; /* Divide the screen into 3 columns */
-height: 33.33vh; /* 1/3 of viewport height */
-box-sizing: border-box;
-overflow: hidden;
-}
+        .image-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(30vw, 1fr)); /* Flexibly adjust size */
+            gap: 0;
+            width: 100%;
+            height: 100%;
+            justify-items: center;
+            align-items: center;
+        }
 
-.image-sequence {
-width: 100%; /* Fill container width */
-height: 100%; /* Fill container height */
-object-fit: contain; /* Ensure full image is visible, scaled to fit */
-display: block;
-animation: flicker 10s linear infinite;
-}
+        .image-sequence-container {
+            display: grid;
+            grid-template-columns: 1fr; /* One image per row in each sequence */
+            gap: 0;
+            width: 100%;
+            height: 100%;
+        }
 
-/* Animation to make the image flicker like a gif */
-@keyframes flicker {
-0% {
-opacity: 0;
-}
-10% {
-opacity: 1;
-}
-20% {
-opacity: 0;
-}
-30% {
-opacity: 1;
-}
-40% {
-opacity: 0;
-}
-50% {
-opacity: 1;
-}
-60% {
-opacity: 0;
-}
-70% {
-opacity: 1;
-}
-80% {
-opacity: 0;
-}
-90% {
-opacity: 1;
-}
-100% {
-opacity: 0;
+        .image-sequence {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            animation: flicker 1s infinite;
+        }
 
-}
-}
-</style>
+        @keyframes flicker {
+            0%, 100% {
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+    </style>
 </head>
 <body>
-<script>
-// Array of image URLs
-const images = [
-"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/01_shaquille_oneal.jpg",
-"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/02_alonzo_mourning.jpg",
-"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/03_christian_laettner.jpg",
-"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/04_jim_jackson.jpg",
-"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/05_laphonso_ellis.jpg",
-"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/06_tom_gugliotta.jpg",
-"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/07_walt_williams.jpg",
-"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/08_todd_day.jpg",
-"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/09_clarence_weatherspoon.jpg",
-"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/10_adam_keefe.jpg",
-"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/11_robert_horry.jpg",
-"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/12_harold_miner.jpg",
-"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/13_bryant_stith.jpg",
-"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/14_malik_sealy.jpg",
-"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/15_anthony_peeler.jpg",
-"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/16_randy_woods.jpg",
-"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/17_doug_christie.jpg",
-"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/18_tracy_murray.jpg",
-"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/19_don_maclean.jpg",
-"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/20_hubert_davis.jpg",
-"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/21_jon_barry.jpg",
-"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/22_oliver_miller.jpg",
-"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/23_lee_mayberry.jpg",
-"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/24_latrell_sprewell.jpg",
-"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/25_elmore_spencer.jpg",
-"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/26_dave_johnson.jpg",
-"https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/27_byron_houston.jpg"
-];
+    <script>
+        // List of image URLs (27 images)
+        const images = [
+            "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/01_shaquille_oneal.jpg",
+            "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/02_alonzo_mourning.jpg",
+            "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/03_christian_laettner.jpg",
+            "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/04_jim_jackson.jpg",
+            "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/05_laphonso_ellis.jpg",
+            "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/06_tom_gugliotta.jpg",
+            "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/07_walt_williams.jpg",
+            "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/08_todd_day.jpg",
+            "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/09_clarence_weatherspoon.jpg",
+            "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/10_adam_keefe.jpg",
+            "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/11_robert_horry.jpg",
+            "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/12_harold_miner.jpg",
+            "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/13_bryant_stith.jpg",
+            "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/14_malik_sealy.jpg",
+            "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/15_anthony_peeler.jpg",
+            "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/16_randy_woods.jpg",
+            "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/17_doug_christie.jpg",
+            "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/18_tracy_murray.jpg",
+            "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/19_don_maclean.jpg",
+            "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/20_hubert_davis.jpg",
+            "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/21_jon_barry.jpg",
+            "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/22_oliver_miller.jpg",
+            "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/23_lee_mayberry.jpg",
+            "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/24_latrell_sprewell.jpg",
+            "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/25_elmore_spencer.jpg",
+            "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/26_dave_johnson.jpg",
+            "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/27_byron_houston.jpg"
+        ];
 
-let sequenceContainer = document.body;
+        // Shuffle the images randomly
+        function shuffleArray(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+        }
 
-// Shuffle function for randomizing image order
-function shuffleArray(arr) {
-for (let i = arr.length - 1; i > 0; i--) {
-const j = Math.floor(Math.random() * (i + 1));
-[arr[i], arr[j]] = [arr[j], arr[i]];
-}
-}
+        // Create and display the image sequence
+        function createImageSequence() {
+            // Shuffle the images
+            shuffleArray(images);
 
-// Create and add a new image sequence
-function createImageSequence() {
-// Shuffle the images for randomness
-shuffleArray(images);
+            // Get the container to hold the images
+            const container = document.querySelector('.image-container');
 
-// Create a new container for the sequence of images
-let newContainer = document.createElement('div');
-newContainer.classList.add('image-container');
+            // Create a new sequence container
+            const sequenceContainer = document.createElement('div');
+            sequenceContainer.classList.add('image-sequence-container');
 
-// Create image elements for the sequence, ensuring they act like a flickering gif
-for (let i = 0; i < images.length; i++) {
-let img = document.createElement('img');
-img.src = images[i];
-img.classList.add('image-sequence');
-img.style.animationDelay = `${i * 0.2}s`; // Delay each image to create flickering effect
-newContainer.appendChild(img);
-}
+            // Create image elements for each of the 27 images
+            images.forEach((src, index) => {
+                const img = document.createElement('img');
+                img.src = src;
+                img.classList.add('image-sequence');
+                img.style.animationDelay = `${index * 0.1}s`; // Delay for flickering effect
+                sequenceContainer.appendChild(img);
+            });
 
-// Add the new sequence to the page
-sequenceContainer.appendChild(newContainer);
-}
+            // Append the new sequence to the container
+            container.appendChild(sequenceContainer);
 
-// Create the first image sequence automatically when the page loads
-window.onload = createImageSequence;
+            // Adjust the grid layout to fill the page and resize images
+            adjustGridLayout();
+        }
 
+        // Function to adjust the grid layout
+        function adjustGridLayout() {
+            const container = document.querySelector('.image-container');
+            const numSequences = container.children.length;
+            const rows = Math.ceil(numSequences / 3); // Assuming a 3-column layout
+            const columns = 3;
 
+            container.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
+        }
 
-// Listen for Enter key to add new sequence
-document.addEventListener('keydown', function(event) {
-if (event.key === "Enter") {
-createImageSequence();
-}
-});
-</script>
+        // Start the first sequence automatically when the page loads
+        window.onload = createImageSequence;
+
+        // Add a new sequence when the Enter key is pressed
+        document.addEventListener('keydown', function(event) {
+            if (event.key === "Enter") {
+                createImageSequence();
+            }
+        });
+    </script>
 </body>
 </html>
