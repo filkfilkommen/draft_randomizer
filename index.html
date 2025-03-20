@@ -9,58 +9,36 @@ body {
 margin: 0;
 padding: 0;
 display: flex;
+flex-wrap: wrap;
 justify-content: center;
-align-items: flex-start;
-height: 100vh;
-overflow: hidden;
+align-items: center;
+min-height: 100vh;
 background-color: #000;
 }
 
-.container {
-width: 100%;
-height: 100%;
-display: grid;
-grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-grid-gap: 5px;
-justify-content: center;
-align-items: flex-start;
-overflow: hidden;
-}
-
-.image-container {
+.sequence {
+width: 65vw; /* Full width of the sequence */
+height: 65vh; /* Full height of the sequence */
 display: flex;
-flex-direction: column;
 justify-content: center;
 align-items: center;
-margin: 5px;
-box-sizing: border-box;
-transition: all 0.3s ease;
+margin: 0; /* No margin between the sequences */
+border: 2px solid white;
+overflow: hidden;
+position: relative;
 }
 
 .image {
 width: 100%;
-height: auto;
-display: none;
-transition: all 0.2s ease-in-out;
-}
-
-/* Keyframe for rapidly showing and hiding images */
-@keyframes flicker {
-0% { opacity: 1; }
-20% { opacity: 0; }
-40% { opacity: 1; }
-60% { opacity: 0; }
-80% { opacity: 1; }
-100% { opacity: 0; }
+height: 100%;
+object-fit: cover; /* Make sure image covers the area */
 }
 </style>
 </head>
 <body>
 
-<div class="container"></div>
-
 <script>
-// Array of image URLs (Update these with your raw GitHub image URLs)
+// Array of image URLs (replace with your raw URLs)
 const images = [
 "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/01_shaquille_oneal.jpg",
 "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/02_alonzo_mourning.jpg",
@@ -89,90 +67,56 @@ const images = [
 "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/25_elmore_spencer.jpg", 
 "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/26_dave_johnson.jpg", 
 "https://raw.githubusercontent.com/filkfilkommen/draft_randomizer/main/27_byron_houston.jpg"
-// Add all other image URLs here...
+// Add all the other image URLs
 ];
 
-// Function to shuffle an array
+// Function to shuffle the array of images
 function shuffleArray(array) {
 for (let i = array.length - 1; i > 0; i--) {
 const j = Math.floor(Math.random() * (i + 1));
-[array[i], array[j]] = [array[j], array[i]];
+[array[i], array[j]] = [array[j], array[i]]; // Swap
 }
 return array;
 }
 
-// Function to create a new sequence of images
-function createSequence() {
+// Function to create and append a new sequence of images
+function addNewSequence() {
+// Shuffle the images for each new sequence
 const shuffledImages = shuffleArray([...images]);
 
-// Create a new container for this sequence
-const container = document.createElement('div');
-container.className = 'image-container';
+// Create the sequence container
+const sequenceContainer = document.createElement('div');
+sequenceContainer.classList.add('sequence');
 
-// Create the images for this sequence
-shuffledImages.forEach((imageUrl, index) => {
-const img = document.createElement('img');
-img.src = imageUrl;
-img.className = 'image';
-img.alt = 'Random Image';
+// Create the image element and append it
+const imgElement = document.createElement('img');
+imgElement.src = shuffledImages[0]; // Display the first image of the shuffled set
+imgElement.classList.add('image');
+sequenceContainer.appendChild(imgElement);
 
-// Add the flicker animation to each image
-img.style.animation = `flicker ${shuffledImages.length * 0.2}s infinite`;
+// Add the sequence to the body
+document.body.appendChild(sequenceContainer);
 
-// Append image to container
-container.appendChild(img);
+// Shrink all existing sequences after the page has been filled with a certain amount
+if (document.body.children.length > 3) {
+const allSequences = document.querySelectorAll('.sequence');
+allSequences.forEach(sequence => {
+sequence.style.width = '50vw'; // Shrink size once enough sequences are present
+sequence.style.height = '50vh'; // Shrink size accordingly
 });
-
-// Append the new sequence to the container (inside the main body)
-document.querySelector('.container').appendChild(container);
-
-// Start the images flickering
-startFlicker(container);
-adjustGrid();
+}
 }
 
-// Function to start the flickering for each image container
-function startFlicker(container) {
-const images = container.querySelectorAll('.image');
-let currentIndex = 0;
+// Trigger the adding of new sequences every 27 images (could be adjusted)
+setInterval(addNewSequence, 27 * 100); // Change 100 to control speed
 
-setInterval(() => {
-// Hide all images
-images.forEach(img => img.style.display = 'none');
-// Show the current image in the sequence
-images[currentIndex].style.display = 'block';
-currentIndex = (currentIndex + 1) % images.length; // Move to the next image in sequence
-}, 100); // Change every 100ms (adjust to make faster/slower flicker)
-}
-
-// Function to adjust the grid layout when new sequences are added
-function adjustGrid() {
-const containers = document.querySelectorAll('.image-container');
-const totalContainers = containers.length;
-
-// Calculate number of rows and columns for grid layout based on the total containers
-const rows = Math.ceil(Math.sqrt(totalContainers)); // Calculate rows needed for the grid
-const columns = Math.ceil(totalContainers / rows); // Calculate columns needed
-
-// Adjust the size of each container based on the grid
-containers.forEach(container => {
-const width = (100 / columns) - 10; // Adjust width based on columns
-container.style.width = `${width}%`;
-container.style.height = `${100 / rows}%`; // Adjust height based on rows
-});
-
-
-}
-
-// Create the first sequence immediately when the page loads
-createSequence();
-
-// Add a new sequence on key press (Enter key)
-window.addEventListener('keydown', function(event) {
+// Optional: Allow the user to refresh by hitting enter
+document.body.addEventListener('keydown', function(event) {
 if (event.key === 'Enter') {
-createSequence();
+location.reload(); // Refresh the page and shuffle images
 }
 });
+
 </script>
 
 </body>
